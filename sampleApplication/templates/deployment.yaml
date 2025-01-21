@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-application.fullname" . }}-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "my-application.name" . }}-frontend
+  template:
+    metadata:
+      labels:
+        app: {{ include "my-application.name" . }}-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.frontend.service.port }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-application.fullname" . }}-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "my-application.name" . }}-backend
+  template:
+    metadata:
+      labels:
+        app: {{ include "my-application.name" . }}-backend
+    spec:
+      containers:
+      - name: backend
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        env:
+        - name: SPRING_POSTGRES_USERNAME
+          value: {{ .Values.backend.env.SPRING_POSTGRES_USERNAME }}
+        - name: SPRING_POSTGRES_PASSWORD
+          value: {{ .Values.backend.env.SPRING_POSTGRES_PASSWORD }}
+        - name: SPRING_POSTGRES_URL
+          value: {{ .Values.backend.env.SPRING_POSTGRES_URL }}
+        ports:
+        - containerPort: {{ .Values.backend.service.port }}

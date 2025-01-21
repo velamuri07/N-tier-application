@@ -1,0 +1,23 @@
+frontend:
+  image:
+    repository: my-registry.io/my-application/front
+    tag: "1.0"
+  service:
+    type: ClusterIP
+    port: 80
+
+backend:
+  image:
+    repository: my-registry.io/my-application/backend
+    tag: "1.0"
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    SPRING_POSTGRES_USERNAME: "myapplication"
+    SPRING_POSTGRES_PASSWORD: "M3P@ssw0rd!"
+    SPRING_POSTGRES_URL: "jdbc:postgresql://my-db-test.io:5432/mydatabase"
+
+ingress:
+  enabled: true
+  host: frontend.local
