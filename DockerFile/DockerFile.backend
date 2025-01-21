@@ -1,0 +1,9 @@
+FROM maven:3.8.5-openjdk-17 as build
+WORKDIR /app
+COPY ./backend/pom.xml ./backend/
+COPY ./backend/src ./backend/src
+RUN mvn -f ./backend/pom.xml clean package -DskipTests
+
+FROM openjdk:17
+COPY --from=build /app/backend/target/myapp.jar /usr/local/lib/myapp.jar
+ENTRYPOINT ["java", "-jar", "/usr/local/lib/myapp.jar"]
