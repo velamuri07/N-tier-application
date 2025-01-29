@@ -1,20 +1,23 @@
-{{- if .Values.ingress.enabled }}
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: v1
+kind: Service
 metadata:
   name: {{ include "my-application.fullname" . }}-frontend
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  rules:
-  - host: {{ .Values.ingress.host }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ include "my-application.fullname" . }}-frontend
-            port:
-              number: {{ .Values.frontend.service.port }}
-{{- end }}
+  type: {{ .Values.frontend.service.type }}
+  ports:
+  - port: {{ .Values.frontend.service.port }}
+    targetPort: {{ .Values.frontend.service.port }}
+  selector:
+    app: {{ include "my-application.name" . }}-frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "my-application.fullname" . }}-backend
+spec:
+  type: {{ .Values.backend.service.type }}
+  ports:
+  - port: {{ .Values.backend.service.port }}
+    targetPort: {{ .Values.backend.service.port }}
+  selector:
+    app: {{ include "my-application.name" . }}-backend
